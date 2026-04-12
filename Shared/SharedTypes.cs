@@ -4,6 +4,8 @@
     {
         public const string FilesDirectory = "C:\\Users\\BERKAY\\Desktop\\1BRC\\1BRCOutputs\\";
         public const string FilePath = "C:\\Users\\BERKAY\\Desktop\\1BRC\\1BRCOutputs\\measurements.txt";
+
+        public const int ExpectedStationCount = 500;
     }
 
     public static class FileSelector
@@ -147,15 +149,27 @@
 
     public class CityStats
     {
-        public double Min { get; set; }
+        public double Min { get; set; } = double.MaxValue; // Sebep : İlk değerin Min olarak atanması, ilk güncellemede Min ve Max'ın doğru şekilde güncellenmesini sağlar.
 
-        public double Max { get; set; }
+        public double Max { get; set; } = double.MinValue; // Sebep: İlk değerin Max olarak atanması, ilk güncellemede Min ve Max'ın doğru şekilde güncellenmesini sağlar.
 
         public double Sum { get; set; }
 
         public int Count { get; set; }
 
-        public double Mean => Count > 0 ? Sum / Count : 0;  
-    }
+        public double Mean => Count > 0 ? Sum / Count : 0;
 
+        public void Update(double value)
+        {
+
+            if (value < Min) Min = value;
+            if (value > Max) Max = value;
+
+            Sum += value;
+            Count++;
+        }
+
+        public override string ToString() => $"Min={Min}, Max={Max}, Mean={Mean:F2}";
+    }
 }
+
