@@ -52,6 +52,23 @@ GC.Collect();
 GC.WaitForPendingFinalizers();
 GC.Collect();
 
+//var lockObj = new Lock();  
+//int counter = 0;
+//Parallel.For(0, 1000000, i =>
+//{
+//    // Kilitli ise thread bekler, kilit açıldığında sıradaki thread çalışır.
+//    // Bu, counter değişkenine aynı anda birden fazla thread'in erişmesini engeller ve veri tutarlılığını sağlar.
+//    lock (lockObj)
+//    {
+//        counter++;
+//    }
+//});
+//Console.WriteLine($"Counter: {counter}");
+
+//Console.ReadLine();
+
+//return;
+
 var stopwatch = Stopwatch.StartNew();
 
 // Kapasite belirtmek bellek tahsisini optimize eder. Beklenen istasyon sayısına göre bir kapasite belirleyelim.

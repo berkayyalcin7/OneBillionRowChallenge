@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="CPU.MD" />
+  </Folder>
   <Project Path="DataGenerator.Console/DataGenerator.Console.csproj" />
   <Project Path="Level1_Naive/Level1_Naive.csproj" />
   <Project Path="Level2_Stream/Level2_Stream.csproj" Id="64626ecd-df9b-4db3-a1a3-203c9b315a68" />
