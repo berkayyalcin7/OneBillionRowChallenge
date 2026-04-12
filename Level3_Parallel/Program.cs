@@ -106,10 +106,29 @@ Parallel.For(0, threadCount, threatIndex =>
 
 });
 
+static void ProcessLine(ReadOnlySpan<char> line, Dictionary<string, CityStats> localStats)
+{
+    var separator = line.IndexOf(';');
+    if (separator < 0 || separator >= line.Length - 1)
+        return;
+
+    // Allocation var, çünkü line[..separator] ve line[(separator + 1)..] ifadeleri yeni string'ler oluşturur.
+    // Ancak, bu işlemi yaparken ReadOnlySpan<char> kullanarak gereksiz string oluşturmayı önleyebiliriz.
+    var stationName = line[..separator].ToString();
+
+    // Temperature değerini double'a dönüştürelim.
+    // Burada allocation yoktur. Çünkü double.Parse, ReadOnlySpan<char> alabilir ve doğrudan bu span üzerinden parse işlemi yapabilir.
+    var temperature = double.Parse(line[(separator + 1)..]);
 
 
+    if (!localStats.TryGetValue(stationName, out var stat))
+    {
+        stat = new CityStats();
+        localStats.Add(stationName, stat);
+    }
 
-
+    stat.Update(temperature);
+}
 
 static long[] ComputeChunkBoundaries(string fileName, long fileSize, int threadCount)
 {
