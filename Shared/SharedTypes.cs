@@ -169,6 +169,14 @@
             Count++;
         }
 
+        public void Merge(CityStats other)
+        {
+            if (other.Min < Min) Min = other.Min;
+            if (other.Max > Max) Max = other.Max;
+            Sum += other.Sum;
+            Count += other.Count;
+        }
+
         public override string ToString() => $"Min={Min}, Max={Max}, Mean={Mean:F2}";
     }
 }

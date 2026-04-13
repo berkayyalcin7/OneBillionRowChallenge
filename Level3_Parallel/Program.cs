@@ -45,18 +45,18 @@ var chunkBoundaries = ComputeChunkBoundaries(selectedFilePath, new FileInfo(sele
 
 // Her thread kendi chunkını okuyacak şekilde paralel işlemi başlatalım.
 
-var theradLocalResults= new Dictionary<string,CityStats>[threadCount];
+var threadLocalResults= new Dictionary<string,CityStats>[threadCount];
 
 var lineCounters = new long[threadCount];
 
 
-Parallel.For(0, threadCount, threatIndex =>
+Parallel.For(0, threadCount, threadIndex =>
 {
     // Her thread için çalışan bölüm.
 
     // Başlangıç ve bitiş byte'larını belirleyelim.
-    var startByte = chunkBoundaries[threatIndex];
-    var endByte = chunkBoundaries[threatIndex + 1];
+    var startByte = chunkBoundaries[threadIndex];
+    var endByte = chunkBoundaries[threadIndex + 1];
     // Okunacak byte sayısını hesaplayalım.
     var chunkLength = (int)(endByte - startByte);
 
@@ -104,7 +104,40 @@ Parallel.For(0, threadCount, threatIndex =>
         }
     }
 
+    threadLocalResults[threadIndex]= localStats;
+    lineCounters[threadIndex] = localLineCount;
+
 });
+
+// MERGE DICTIONARIES
+
+var finalResults = new Dictionary<string, CityStats>(GlobalConstants.ExpectedStationCount);
+
+// Her thread'in kendi localResults sözlüğü var. Bu sözlükleri tek bir finalResults sözlüğünde birleştirmemiz gerekiyor.
+foreach (var localDict in threadLocalResults)
+{
+    // Eğer localDict null ise, bu thread'in herhangi bir veri işlemediği anlamına gelir. Bu durumda, bu thread'in sonuçlarını atlayabiliriz.
+    if (localDict == null)
+    {
+        continue;
+    }
+
+    // Key value çiftlerini tek tek finalResults sözlüğüne ekleyelim. Eğer aynı anahtar zaten varsa, CityStats nesnelerini birleştirelim.
+    foreach (var (stationName,stats) in localDict)
+    {
+        if(!finalResults.TryGetValue(stationName, out var existingStats))
+        {
+            existingStats = new CityStats();
+            finalResults.Add(stationName, existingStats);
+        }
+        // Merge işlemi, mevcut istatistiklerle yeni istatistikleri birleştirir. Örneğin, toplam sıcaklık, maksimum sıcaklık ve ölçüm sayısı gibi değerleri günceller.
+        existingStats.Merge(stats);
+    }
+}
+
+var totalLines = lineCounters.Sum();
+
+stopwatch.Stop();
 
 static void ProcessLine(ReadOnlySpan<char> line, Dictionary<string, CityStats> localStats)
 {
@@ -162,9 +195,40 @@ static long[] ComputeChunkBoundaries(string fileName, long fileSize, int threadC
         // Eğer dosya sonuna ulaşıldıysa, chunk sınırını dosya boyutuna ayarla
         if (b == -1)
         {
-            boundaries[i] = fileSize; 
+            boundaries[i] = fileSize;
         }
     }
 
     return boundaries;
 }
+
+
+
+var sortedResults = finalResults.OrderBy(kvp => kvp.Key).ToList();
+
+var output = ResultLogger.FormatOutput(sortedResults);
+Console.WriteLine(output);
+
+Console.WriteLine();
+Console.WriteLine($"Processed {totalLines:N0} rows using {threadCount} threads");
+Console.WriteLine($"Found {finalResults.Count} unique stations");
+Console.WriteLine($"Elapsed: {stopwatch.Elapsed}");
+
+// Save results to file
+ResultLogger.SaveResult(
+    projectName: "Level03_Parallel",
+    output: output,
+    elapsed: stopwatch.Elapsed,
+    rowCount: totalLines,
+    stationCount: finalResults.Count);
+
+// Per-thread statistics
+Console.WriteLine();
+Console.WriteLine("Per-Thread Statistics:");
+for (var i = 0; i < threadCount; i++)
+{
+    var stationCount = threadLocalResults[i]?.Count ?? 0;
+    Console.WriteLine($"  Thread {i}: {lineCounters[i]:N0} lines, {stationCount} stations");
+}
+
+
