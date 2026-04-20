@@ -144,6 +144,8 @@ unsafe
 
                 var temperature = ParseTemperature(tempSpan); // Stats bölümünden sıcaklık değerini parse ediyoruz.
 
+
+
                 // Update Statistics
                 if(localStats.TryGetValue(hash, out var existingStats))
                 {
@@ -158,6 +160,7 @@ unsafe
                     var stats= CityStatsStruct.Create();
                     localStats[hash] = (name, stats);
                 }
+
 
                 localLineCount++;
                 pos = newlinePos + 1; // Bir sonraki satırın başlangıç pozisyonuna geçiyoruz.
