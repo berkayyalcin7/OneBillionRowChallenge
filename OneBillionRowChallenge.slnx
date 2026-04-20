@@ -6,5 +6,6 @@
   <Project Path="Level1_Naive/Level1_Naive.csproj" />
   <Project Path="Level2_Stream/Level2_Stream.csproj" Id="64626ecd-df9b-4db3-a1a3-203c9b315a68" />
   <Project Path="Level3_Parallel/Level3_Parallel.csproj" Id="08681eb8-88ff-4456-b6fb-6d36c987ce28" />
+  <Project Path="Level5_Simd/Level5_Simd.csproj" Id="40e55b5d-0354-4b15-b03e-43d7d97c3cff" />
   <Project Path="Shared/Shared.csproj" />
 </Solution>
