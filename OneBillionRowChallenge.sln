@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Level2_Stream", "Level2_Str
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Level3_Parallel", "Level3_Parallel\Level3_Parallel.csproj", "{60F8F0AA-7B5B-4ED8-941C-67B9D1B216B4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AA9D3A10-7FF4-48B5-9B1A-0C841B9ED318}"
+	ProjectSection(SolutionItems) = preProject
+		KERNELMODE.MD = KERNELMODE.MD
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
