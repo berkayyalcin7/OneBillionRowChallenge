@@ -179,5 +179,47 @@
 
         public override string ToString() => $"Min={Min}, Max={Max}, Mean={Mean:F2}";
     }
-}
 
+    public struct CityStatsStruct
+    {
+        public double Min { get; set; }
+        public double Max { get; set; }
+        public double Sum { get; set; }
+        public int Count { get; set; }
+        public double Mean => Count > 0 ? Sum / Count : 0;
+
+        public static CityStatsStruct Create() => new()
+        {
+            Min = double.MaxValue,
+            Max = double.MinValue,
+            Sum = 0,
+            Count = 0
+        };
+
+        public void Update(double value)
+        {
+            if (Count == 0)
+            {
+                Min = Max = value;
+            }
+            else
+            {
+                if (value < Min) Min = value;
+                if (value > Max) Max = value;
+            }
+            Sum += value;
+            Count++;
+        }
+        public void Merge(in CityStatsStruct other) // 'in' parametresi, diğer struct'ın kopyalanmadan referans olarak geçirilmesini sağlar, böylece performans artar.
+        {
+            if (other.Min < Min) Min = other.Min;
+            if (other.Max > Max) Max = other.Max;
+            Sum += other.Sum;
+            Count += other.Count;
+        }
+        public override string ToString() => $"Min={Min}, Max={Max}, Mean={Mean:F2}";
+
+        
+    }
+
+}

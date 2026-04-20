@@ -60,6 +60,7 @@ Parallel.For(0, threadCount, threadIndex =>
     // Okunacak byte sayısını hesaplayalım.
     var chunkLength = (int)(endByte - startByte);
 
+    // Bu bilgiyi struct olarak kullanabiliriz.
     var localStats = new Dictionary<string, CityStats>(GlobalConstants.ExpectedStationCount);
 
     var localLineCount = 0;
